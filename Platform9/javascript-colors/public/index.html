@@ -1,0 +1,195 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Platform 9 App</title>
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+    <button onclick="createBlock();"> Create Object </button>
+    <button onclick="removeAll();"> Remove All Objects </button>
+    <div class="row">
+        <div id="redpanel" class="col-md-4"></div>
+        <div id="greenpanel" class="col-md-4"></div>
+        <div id="bluepanel" class="col-md-4"></div>
+    </div>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/feathersjs/feathers-client/v1.1.0/dist/feathers.js"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <script type="text/javascript">
+        $("#redpanel").droppable({
+            over: function(event, ui) {
+                $(ui.draggable).animate({
+                    backgroundColor: "#FF0000",
+                }, 500);
+            },
+            drop: function(event, ui) {
+                var id = $(ui.draggable).attr("id");
+                newcolor = "red";
+                objectService.update(id, {
+                    color: newcolor
+                });
+            }
+        });
+    </script>
+
+    <script type="text/javascript">
+        $("#greenpanel").droppable({
+            over: function(event, ui) {
+                $(ui.draggable).animate({
+                    backgroundColor: "#008800",
+                }, 500);
+            },
+            drop: function(event, ui) {
+                var id = $(ui.draggable).attr("id");
+                newcolor = "green";
+                objectService.update(id, {
+                    color: newcolor
+                });
+            }
+        });
+    </script>
+
+
+    <script type="text/javascript">
+        $("#bluepanel").droppable({
+            over: function(event, ui) {
+                $(ui.draggable).animate({
+                    backgroundColor: "#0000FF",
+                }, 500);
+            },
+            drop: function(event, ui) {
+                var id = $(ui.draggable).attr("id");
+                newcolor = "blue";
+                objectService.update(id, {
+                    color: newcolor
+                });
+            }
+        });
+    </script>
+
+    <script type="text/javascript">
+        var socket = io();
+        var app = feathers()
+            .configure(feathers.hooks())
+            .configure(feathers.socketio(socket))
+        var objectService = app.service('objects');
+
+        function removeAll() {
+            $(document).ready(function() {
+                $.ajax({
+                    url: "/objects",
+                    context: document.body,
+                    success: function(data) {
+                        Object.keys(data).map(function(key) {
+                            console.log(data[key]._id);
+                            objectService.remove(data[key]._id);
+                        })
+                    }
+                })
+            });
+        }
+
+        $(document).ready(function() {
+          $.ajax({
+              url: "/objects",
+              context: document.body,
+              success: function(data) {
+                  Object.keys(data).map(function(key) {
+                      if (data[key].color == 'red') {
+                          $("<div />", {
+                              class: 'redblock',
+                              id: data[key]._id,
+                          }).appendTo("#redpanel");
+                          $("#" + data[key]._id).draggable({
+                              stack: "body"
+                          });
+                      }
+                      if (data[key].color == 'blue') {
+                          $("<div />", {
+                              class: 'blueblock',
+                              id: data[key]._id,
+                          }).appendTo("#bluepanel");
+                          $("#" + data[key]._id).draggable({
+                              stack: "body"
+                          });
+                      }
+                      if (data[key].color == 'green') {
+                          $("<div />", {
+                              class: 'greenblock',
+                              id: data[key]._id,
+                          }).appendTo("#greenpanel");
+                          $("#" + data[key]._id).draggable({
+                              stack: "body"
+                          });
+                      }
+                  })
+              }
+          })
+        });
+
+        objectService.on('created', function(block) {
+            if (block.color == 'red') {
+                $("#redpanel").append("<div class=\"redblock\" id=" + block._id + "></div>");
+            }
+            if (block.color == 'blue') {
+                $("#bluepanel").append("<div class=\"blueblock\" id=" + block._id + "></div>");
+            }
+            if (block.color == 'green') {
+                $("#greenpanel").append("<div class=\"greenblock\" id=" + block._id + "></div>");
+            }
+            $("#" + block._id).draggable({
+                stack: "body"
+            });
+            console.log('A new ' + block.color + ' colored block created with id = ' + block._id, block);
+        });
+
+        objectService.on('updated', function(block) {
+            $("#" + block._id).remove();
+            $("<div />", {
+                class: block.color + 'block',
+                id: block._id,
+            }).appendTo("#" + block.color + "panel");
+            $("#" + block._id).draggable({
+                stack: "body"
+            });
+            console.log("Object with id " + block._id + " changed color to " + block.color);
+        });
+
+        objectService.on('removed', function(block) {
+            $("#" + block._id).remove();
+            console.log("Object with id " + block._id + " removed.");
+        });
+
+        function createBlock() {
+            newcolor = prompt("Please enter block color", "blue");
+            objectService.create({
+                color: newcolor
+            });
+        }
+    </script>
+</body>
+
+</html>

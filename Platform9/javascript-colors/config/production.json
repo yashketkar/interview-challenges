@@ -1,0 +1,13 @@
+{
+  "host": "floating-wildwood-62658.herokuapp.com",
+  "port": "80",
+  "nedb": "NEDB_BASE_PATH",
+  "public": "../public/",
+  "auth": {
+    "idField": "id",
+    "token": {
+      "secret": "FEATHERS_AUTH_SECRET"
+    },
+    "local": {}
+  }
+}

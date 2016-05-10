@@ -1,0 +1,39 @@
+#redpanel {
+background-color:#ffc4c4;
+height:100vh;
+}
+#bluepanel {
+background-color:#c4f8ff;
+height:100vh;
+}
+#greenpanel {
+background-color:#c9ffc4;
+height:100vh;
+}
+.highlight {
+  background-color:#feff5f;
+  height:100vh;
+}
+.redblock {
+    background-color:#FF0000;
+    height:50px;
+   width:50px;
+   display: inline-block;
+   margin: 5px 5px 5px 5px;
+}
+
+.blueblock {
+    background-color:#0000FF;
+    height:50px;
+   width:50px;
+   display: inline-block;
+   margin: 5px 5px 5px 5px;
+    }
+
+.greenblock {
+    background-color:#008800;
+    height:50px;
+   width:50px;
+   display: inline-block;
+   margin: 5px 5px 5px 5px;
+    }

@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Telenotes</string>
+    <string name="title_activity_maps">Restaurant Details</string>
+    <string name="filter_name">Restaurant Name</string>
+    <string name="filter_type">Cuisine</string>
+    <string name="filter_set">Set Filter Criteria</string>
+    <string name="filter">Filter</string>
+    <string name="no_data_available">Sorry, your search returned no results.</string>
+</resources>
