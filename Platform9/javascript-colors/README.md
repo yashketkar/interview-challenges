@@ -1,5 +1,7 @@
 # platform9
 
+Platform 9 App deployed on Heroku : https://floating-wildwood-62658.herokuapp.com/
+
 > Retrieve and render a collection of objects from a server, handle state transitions, maintain consistency across clients
 
 ## About
